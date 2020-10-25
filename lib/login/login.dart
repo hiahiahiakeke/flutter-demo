@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:new_demo_flutter/module/pub.dart';
 
 Dio dio = new Dio();
 
@@ -32,14 +33,17 @@ class _FormregistState extends State<Formregist> {
   String _verifyStr = '获取验证码';
   int _seconds = 0;
   Timer _timer;
+  String username = '';
+  String smsCode = '';
 
   _getSmsCode() async {
-    if (_seconds == 0) {
+    if (_seconds == 0 && username != '') {
       print('start timeout');
       _startIimer();
-      Response<String> response = await dio.get('https://www.baidu.com/');
-      print(response.statusCode);
+      // Response<String> response = await dio.get('https://www.baidu.com/');
+      // print(response.statusCode);
 
+      PubModule.httpRequest('get', '/getsmsCode').then();
       // // request
       // // 1.引入io
       // // 2.建立client
@@ -75,6 +79,8 @@ class _FormregistState extends State<Formregist> {
     _timer.cancel();
   }
 
+  _login() {}
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -108,7 +114,11 @@ class _FormregistState extends State<Formregist> {
                 fontSize: 14.0,
               ),
             ),
-            onChanged: (value) {},
+            onChanged: (value) {
+              setState(() {
+                username = value;
+              });
+            },
             onSubmitted: (value) {},
           ),
         ),
@@ -141,7 +151,11 @@ class _FormregistState extends State<Formregist> {
                         fontSize: 14.0,
                       ),
                     ),
-                    onChanged: (value) {},
+                    onChanged: (value) {
+                      setState(() {
+                        smsCode = value;
+                      });
+                    },
                     onSubmitted: (value) {},
                   ),
                 ),
@@ -174,7 +188,12 @@ class _FormregistState extends State<Formregist> {
           width: double.infinity,
           margin: EdgeInsets.only(top: 20.0),
           child: RaisedButton(
-            onPressed: null,
+            onPressed: username == '' || smsCode == ''
+                ? null
+                : () {
+                    // print('点击了登录');
+                    _login();
+                  },
             child: Text(
               'login',
               style: TextStyle(color: Colors.white),
